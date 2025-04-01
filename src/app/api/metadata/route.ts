@@ -26,7 +26,7 @@ export async function GET(request: Request) {
             ? urlToFetch 
             : `http://${urlToFetch}`;
         validatedUrl = new URL(urlWithProtocol);
-    } catch (_error) {
+    } catch {
         return NextResponse.json({ error: 'Invalid URL provided' }, { status: 400 });
     }
 
@@ -66,20 +66,16 @@ export async function GET(request: Request) {
             root.querySelector('link[rel="shortcut icon"]')?.getAttribute('href');
 
         if (faviconUrl) {
-             // Resolve relative favicon URL to absolute
             try {
                 metadata.favicon = new URL(faviconUrl, validatedUrl.origin).toString();
-            } catch (_e) {
+            } catch {
                 console.warn(`Could not resolve favicon URL ${faviconUrl} relative to ${validatedUrl.origin}`);
-                // Keep potentially relative URL if absolute fails
                 metadata.favicon = faviconUrl;
             }
         } else {
-            // Default fallback if no icon link found
             try {
                  metadata.favicon = new URL('/favicon.ico', validatedUrl.origin).toString();
-                 // You might want to check if this default actually exists before returning it
-             } catch(_e) {
+             } catch {
                  // ignore if base URL is invalid
              }
         }

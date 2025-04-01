@@ -501,25 +501,34 @@ const DashboardPage = () => {
 
       try {
           const content = await file.text();
-          const importedLinks: any[] = JSON.parse(content);
+          // Define type for imported link structure (can be loose)
+          interface ImportedLink { 
+              url: string; 
+              title?: string | null;
+              description?: string | null;
+              tags?: (string | null | undefined)[]; // Allow variation
+              category?: string | null;
+              favicon_url?: string | null;
+          }
+          const importedLinks: ImportedLink[] = JSON.parse(content);
 
           if (!Array.isArray(importedLinks)) throw new Error("Invalid JSON format: Expected an array.");
           if (importedLinks.length === 0) return toast.warning("Import file contains no links.");
          
-          const linksToInsert = importedLinks.map((link: any, index: number) => {
+          const linksToInsert = importedLinks.map((link: ImportedLink, index: number) => {
               if (!link.url || typeof link.url !== 'string') {
                   throw new Error(`Invalid data at index ${index}: Missing/invalid URL.`);
               }
-              // Add more type checks for other fields
-              const tags = Array.isArray(link.tags) 
-                  ? link.tags.filter((t: any): t is string => typeof t === 'string')
-                  : [];
+              // Filter tags more robustly
+              const tags = (Array.isArray(link.tags) 
+                  ? link.tags.filter((t): t is string => typeof t === 'string' && t.length > 0)
+                  : []).map(t => t.trim()); // Also trim valid tags
               return {
-                  user_id: user!.id, // Assert user is not null here
+                  user_id: user!.id,
                   url: link.url,
                   title: typeof link.title === 'string' ? link.title : null,
                   description: typeof link.description === 'string' ? link.description : null,
-                  tags: tags, // Use validated tags
+                  tags: tags,
                   category: typeof link.category === 'string' ? link.category : null,
                   favicon_url: typeof link.favicon_url === 'string' ? link.favicon_url : null,
               };
@@ -855,7 +864,7 @@ const DashboardPage = () => {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the link titled "<span className="font-medium">{linkToDelete?.title || linkToDelete?.url}</span>".
+            This action cannot be undone. This will permanently delete the link titled &quot;<span className="font-medium">{linkToDelete?.title || linkToDelete?.url}</span>&quot;.
              {deleteError && (
                 <p className="text-sm text-destructive mt-2" role="alert">Error: {deleteError}</p>
              )}

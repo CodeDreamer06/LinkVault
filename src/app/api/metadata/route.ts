@@ -26,7 +26,7 @@ export async function GET(request: Request) {
             ? urlToFetch 
             : `http://${urlToFetch}`;
         validatedUrl = new URL(urlWithProtocol);
-    } catch (error) {
+    } catch (_error) {
         return NextResponse.json({ error: 'Invalid URL provided' }, { status: 400 });
     }
 
@@ -61,7 +61,7 @@ export async function GET(request: Request) {
         metadata.description = root.querySelector('meta[name="description"]')?.getAttribute('content') || root.querySelector('meta[property="og:description"]')?.getAttribute('content') || undefined;
         
         // Extract Favicon
-        let faviconUrl = 
+        const faviconUrl = 
             root.querySelector('link[rel="icon"]')?.getAttribute('href') || 
             root.querySelector('link[rel="shortcut icon"]')?.getAttribute('href');
 
@@ -69,7 +69,7 @@ export async function GET(request: Request) {
              // Resolve relative favicon URL to absolute
             try {
                 metadata.favicon = new URL(faviconUrl, validatedUrl.origin).toString();
-            } catch (e) {
+            } catch (_e) {
                 console.warn(`Could not resolve favicon URL ${faviconUrl} relative to ${validatedUrl.origin}`);
                 // Keep potentially relative URL if absolute fails
                 metadata.favicon = faviconUrl;
@@ -79,7 +79,7 @@ export async function GET(request: Request) {
             try {
                  metadata.favicon = new URL('/favicon.ico', validatedUrl.origin).toString();
                  // You might want to check if this default actually exists before returning it
-             } catch(e) {
+             } catch(_e) {
                  // ignore if base URL is invalid
              }
         }
@@ -87,12 +87,21 @@ export async function GET(request: Request) {
         console.log("Extracted metadata:", metadata);
         return NextResponse.json(metadata);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error(`Error fetching or parsing metadata for ${urlToFetch}:`, error);
+        
         // Handle specific errors like timeouts
-        if (error.name === 'TimeoutError') {
-             return NextResponse.json({ error: 'Request timed out while fetching URL metadata' }, { status: 504 });
+        // Need to check the error type more carefully with unknown
+        let errorMessage = 'Failed to process metadata';
+        let status = 500;
+        
+        if (typeof error === 'object' && error !== null && 'name' in error && error.name === 'TimeoutError') {
+             errorMessage = 'Request timed out while fetching URL metadata';
+             status = 504;
+        } else if (error instanceof Error) {
+            errorMessage = error.message; // Safely access message if it's an Error
         }
-        return NextResponse.json({ error: `Internal server error: ${error.message || 'Failed to process metadata'}` }, { status: 500 });
+        
+        return NextResponse.json({ error: `Internal server error: ${errorMessage}` }, { status });
     }
 } 

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
@@ -26,7 +27,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -165,6 +165,18 @@ const DashboardPage = () => {
   }
   // -----------------------------------------------------
 
+  // --- Redirect Logic (Moved Before Early Returns) ---
+  // This hook MUST run unconditionally before any early returns.
+  // The redirect logic itself is still conditional.
+  useEffect(() => {
+    // Only redirect if auth is resolved (!authLoading) and there's no user
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+    // No dependency on user here, just run once after initial auth check is done
+  }, [authLoading, user, router]); // Add user dependency back
+  // ---------------------------------------------------
+
   // Fetch Links Function
   const fetchLinks = useCallback(async () => {
     if (!user) return;
@@ -182,9 +194,10 @@ const DashboardPage = () => {
         throw error;
       }
       setLinks((data as LinkType[]) || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching links:', err);
-      setLinksError(err.message || 'Failed to load links.');
+      const message = (err instanceof Error) ? err.message : 'Failed to load links.';
+      setLinksError(message);
     } finally {
       setLinksLoading(false);
     }
@@ -286,9 +299,11 @@ const DashboardPage = () => {
         handleCloseDialog(); // Close dialog and reset form
         fetchLinks(); // Refresh list
 
-    } catch (err: any) {
+    } catch (err: unknown) {
         console.error(`Error ${dialogMode === 'edit' ? 'updating' : 'adding'} link:`, err);
-        setFormError(err.message || `Failed to ${dialogMode === 'edit' ? 'update' : 'add'} link.`);
+        const baseMessage = `Failed to ${dialogMode === 'edit' ? 'update' : 'add'} link.`;
+        const message = (err instanceof Error) ? err.message : 'Unknown error';
+        setFormError(`${baseMessage} ${message}`);
     } finally {
         setIsSubmitting(false);
     }
@@ -320,9 +335,10 @@ const DashboardPage = () => {
       setLinkToDelete(null);
       fetchLinks();
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error deleting link:', err);
-      setDeleteError(err.message || 'Failed to delete link.');
+      const message = (err instanceof Error) ? err.message : 'Failed to delete link.';
+      setDeleteError(message);
     } finally {
       setIsDeleting(false);
     }
@@ -367,9 +383,10 @@ const DashboardPage = () => {
           if (tags.length === 0) {
               setSuggestionError("Couldn't suggest any tags. Try adding more details.");
           }
-      } catch (error: any) {
+      } catch (error: unknown) {
           console.error("Tag suggestion failed:", error);
-          setSuggestionError(error.message || "Failed to get suggestions.");
+          const message = (error instanceof Error) ? error.message : 'Failed to get suggestions.';
+          setSuggestionError(message);
       } finally {
           setSuggestingTags(false);
       }
@@ -414,10 +431,10 @@ const DashboardPage = () => {
           // Store favicon URL
           setFormFaviconUrl(metadata.favicon || null); // <-- Store fetched favicon
 
-      } catch (error: any) {
+      } catch (error: unknown) {
           console.error("Metadata fetch error:", error);
-          // Display a less intrusive error, maybe near the URL field?
-          // setFormError(`Could not fetch metadata: ${error.message}`); 
+          // Maybe use toast here instead of form error?
+          // toast.error(`Could not fetch metadata: ${ (error instanceof Error) ? error.message : 'Unknown error' }`);
       } finally {
           setIsFetchingMetadata(false);
       }
@@ -446,9 +463,10 @@ const DashboardPage = () => {
           saveAs(blob, `link-vault-export-${new Date().toISOString().split('T')[0]}.json`);
           toast.success(`Exported ${count} links successfully!`);
 
-      } catch (err: any) {
+      } catch (err: unknown) {
           console.error("Export failed:", err);
-          toast.error(`Export failed: ${err.message || 'Unknown error'}`);
+          const message = (err instanceof Error) ? err.message : 'Unknown error';
+          toast.error(`Export failed: ${message}`);
       } finally {
           setIsExporting(false);
       }
@@ -488,16 +506,20 @@ const DashboardPage = () => {
           if (!Array.isArray(importedLinks)) throw new Error("Invalid JSON format: Expected an array.");
           if (importedLinks.length === 0) return toast.warning("Import file contains no links.");
          
-          const linksToInsert = importedLinks.map((link, index) => {
+          const linksToInsert = importedLinks.map((link: any, index: number) => {
               if (!link.url || typeof link.url !== 'string') {
                   throw new Error(`Invalid data at index ${index}: Missing/invalid URL.`);
               }
+              // Add more type checks for other fields
+              const tags = Array.isArray(link.tags) 
+                  ? link.tags.filter((t: any): t is string => typeof t === 'string')
+                  : [];
               return {
-                  user_id: user.id,
+                  user_id: user!.id, // Assert user is not null here
                   url: link.url,
                   title: typeof link.title === 'string' ? link.title : null,
                   description: typeof link.description === 'string' ? link.description : null,
-                  tags: Array.isArray(link.tags) ? link.tags.filter((t: any) => typeof t === 'string') : [],
+                  tags: tags, // Use validated tags
                   category: typeof link.category === 'string' ? link.category : null,
                   favicon_url: typeof link.favicon_url === 'string' ? link.favicon_url : null,
               };
@@ -510,28 +532,24 @@ const DashboardPage = () => {
           toast.success(`Successfully imported ${linksToInsert.length} links!`);
           fetchLinks(); // Refresh list
 
-      } catch (err: any) {
+      } catch (err: unknown) {
           console.error("Import failed:", err);
-          toast.error(`Import failed: ${err.message || 'Could not process file.'}`);
+          const message = (err instanceof Error) ? err.message : 'Could not process file.';
+          toast.error(`Import failed: ${message}`);
       } finally {
           setIsImporting(false);
       }
   };
   // ----------------------------------------------
 
-  // If loading, show a loading state
+  // Auth Loading Check
   if (authLoading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
-  // If not logged in (and not loading), redirect to login
-  // This provides basic route protection on the client-side
+  // Early return if no user AFTER hook has run
   if (!user) {
-     // Using useEffect to redirect after render to avoid React state update warnings
-     useEffect(() => {
-        router.push('/login');
-     }, [router]);
-     return null; // Render nothing while redirecting
+     return null; // Render nothing while redirecting (redirect handled by useEffect now)
   }
 
   // If logged in, show the dashboard content
@@ -783,13 +801,13 @@ const DashboardPage = () => {
                     <CardHeader>
                       <div className="flex items-start gap-2">
                         {link.favicon_url ? (
-                          <img 
+                          <Image 
                             src={link.favicon_url}
                             alt=""
                             width={16}
                             height={16}
-                            className="mt-1 rounded-sm"
-                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            className="mt-1 rounded-sm object-contain"
+                            unoptimized
                           />
                         ) : (
                           <div className="w-4 h-4 mt-1 flex-shrink-0 rounded-sm bg-secondary"></div>

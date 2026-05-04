@@ -1,151 +1,147 @@
 # LinkVault
 
-> Local-first link intelligence for people who save too much and still want to find the right thing later.
+> *For the curious minds who collect fragments of the internet, knowing that somewhere in the pile lies something precious — if only they could find it again.*
 
-LinkVault is a private, offline-capable web application for capturing, organizing, enriching, rediscovering, and exporting web links. It stores everything on your device — no accounts, no cloud databases, no tracking. AI features are entirely optional and run through your own OpenAI-compatible provider (such as VoidAI).
+LinkVault is a local-first sanctuary for the links that matter to you. In a world where everything wants to live in the cloud, we built something that lives in your hands. No accounts. No tracking. No subscriptions. Just you and your carefully curated corner of the internet, stored safely on your device, enriched by AI only when you ask for it.
 
 ![LinkVault](public/screenshot.png)
 
-## Why LinkVault?
+## Why We Built This
 
-Most bookmarking tools eventually become a graveyard of forgotten links. LinkVault is designed around a different question: **How do you keep hundreds or thousands of saved links usable over time?**
+We've all been there. That moment when you know you saved that article — the one with the perfect solution, the inspiring essay, the tool you swore you'd try later. You can almost feel it, somewhere in the digital clutter. But the browser bookmarks have become a canyon of forgotten URLs. The read-later app became a guilt pile. The cloud service you trusted changed its terms, or disappeared entirely.
 
-The answer is a system built for **capture, retrieval, cleanup, resurfacing, and long-term usefulness** — not just storage.
+**LinkVault asks a different question:** What if saving links wasn't about hoarding, but about *cultivation*?
 
-## Core Philosophy
+What if your digital library felt less like a dumping ground and more like a garden — something you tend, prune, and return to with pleasure? Where the act of organizing becomes a form of thinking, and rediscovery feels like running into an old friend?
 
-- **Private by default** — Your data lives in your browser. Nothing leaves your device unless you explicitly export it or invoke an optional AI feature.
-- **Offline-first** — Core workflows work without an internet connection. Metadata fetching and AI are the only online features, and both are optional.
-- **Open and portable** — Your vault is a JSON file you own. Import, export, backup, and restore are first-class features.
-- **AI-augmented, not AI-dependent** — Every AI feature is a toggle. The app is fully functional with AI completely disabled.
+This is software for the long haul. For the researchers, the writers, the developers, the dreamers who know that a link saved today might change their thinking five years from now. We built it because we needed it. We hope it serves you well.
 
-## Features
+## The Philosophy Beneath
 
-### Link Capture
+There's a quiet radicalism in keeping your own data. In a time when every interaction is mined, analyzed, and monetized, LinkVault chooses a different path:
+
+- **Sovereignty over convenience** — Your vault lives where you can touch it: on your device, in a file you can open, understand, and move elsewhere. Cloud sync is lovely until the company changes hands, changes terms, or simply changes its mind. Your links are too precious for that volatility.
+
+- **Offline as freedom** — The core experience works anywhere. On a plane. In a cabin. In that café with terrible WiFi. The internet gave us infinite information; LinkVault gives you infinite organization, even when the connection drops.
+
+- **AI as assistant, not oracle** — We believe AI is a remarkable tool — for suggesting tags, summarizing content, finding patterns. But it's your tool, running through providers you choose, touching only the data you allow. No black boxes. No mystery training. Just augmentation, thoughtfully applied.
+
+- **The joy of curation** — There's a particular pleasure in organizing things well. Not obsessive perfection, but intentional care. Tagging a link. Writing a note. Setting a reminder to revisit something later. These small acts of attention compound into something valuable: a personal knowledge base that reflects *your* mind, not an algorithm's guess at what you might like.
+
+## What You Can Do
+
+### Capture — The Moment of Discovery
+That spark when you find something worth keeping. We make it frictionless:
 - Add links manually with full metadata editing
-- Auto-normalize URLs and strip tracking parameters
+- Auto-normalize URLs, stripping the tracking noise
 - Fetch page title, description, favicon, and preview image
-- Extract multiple links from pasted text
-- Duplicate detection with the option to keep both
-- Quick-add mode for rapid inboxing
-- Draft links before final confirmation
+- Extract multiple links from pasted text (paste a whole email, get the gems)
+- Duplicate detection (with the wisdom to let you keep both if you want)
+- Quick-add mode for when you're in flow
+- Draft links before committing — because sometimes you need to think about it
 
-### Link Library
-- Browse all saved links in a clean, searchable list
-- Edit any link's title, description, notes, tags, category, and collections
-- Delete individual links or bulk delete selections
-- Duplicate links into other collections
-- Archive links without deleting
-- Restore archived links
-- Favorite / pin important links
-- Track created, updated, last-opened, and open-count timestamps
-- Copy original or normalized URL to clipboard
-- Open links directly in your browser
+### Curate — The Art of Organization
+This is where the magic happens. Not rigid folders, but flexible thinking:
+- **Categories** — One per link, for the big buckets of your mind
+- **Tags** — Multiple per link, because nothing fits in just one box
+- **Collections** — Project-based grouping, for things that belong together
+- **Workspaces** — Different contexts, different vault views
+- **Read status** — Unread, reading, read. Simple. Honest.
+- **Priority** — From "someday" to "right now"
+- **Personal notes** — Your thoughts, your words, attached to every link
+- **Domain profiles** — Auto-organize by source, because some sites just keep giving
 
-### Organization
-- **Categories** — One category per link for high-level grouping
-- **Tags** — Multiple tags per link for cross-cutting concerns
-- **Collections** — Manual folders for project-based grouping
-- **Workspaces** — Group links by initiative or context
-- **Read status** — Mark links as unread, reading, or read
-- **Priority** — low, medium, high, urgent
-- **Personal notes** — Long-form annotations on every link
-- **Domain profiles** — Auto-apply default tags and categories per domain
+### Rediscover — The Joy of Returning
+The best saved link is the one you find when you need it:
+- Full-text search across everything — URLs, titles, notes, tags, the works
+- Visual filters with dot-matrix precision: content type, read status, priority, AI-enriched, health status, reminders
+- Sort by relevance, recency, popularity, or your own confidence rating
+- Surface links you've forgotten — those gems waiting in the digital dust
+- Find duplicates and near-duplicates (because we save the same thing twice, often)
+- Orphan tag detection — tags that lost their links, links that lost their tags
 
-### Search, Filters & Discovery
-- Full-text search across URLs, titles, descriptions, notes, tags, and categories
-- Filter by category, tag, collection, workspace, domain, read status, priority, AI-enriched status, date range, and more
-- Combine multiple filters at once
-- Sort by newest, oldest, updated, alphabetical, most opened, last opened, domain, priority, and confidence
-- Save reusable filter presets (coming soon)
-- Surface links with missing metadata
-- Show duplicate or near-duplicate links
-- Show orphan tags and empty categories
-- Resurface candidates that haven't been opened in a long time
+### Reading Spaces — Modes of Attention
+Different moods, different views:
+- **Inbox** — The unprocessed. Everything waiting for your attention.
+- **Favorites** — The loved ones. Links you return to again and again.
+- **Reading List** — Currently in progress. The open tabs of your mind.
+- **Archived** — Not gone, just resting. Soft deletion for the uncertain.
 
-### Inbox & Reading Workflows
-- **Inbox** — Uncategorized links waiting to be triaged
-- **Favorites** — Pinned links you reference often
-- **Reading List** — Links actively being read
-- **Archived** — Soft-deleted links you may want later
+### Enrichment — Making Links Understandable
+Raw URLs are cryptic. Enriched links are useful:
+- Fetch metadata on demand, in bulk, or automatically
+- Detect redirects and canonical URLs — follow the trail
+- Extract Open Graph data for rich previews
+- Detect content type: article, video, tool, repo, documentation, paper, image, audio
+- Language detection for the multilingual vault
+- Graceful failure handling — because the web is messy
 
-### Metadata Enrichment
-- Fetch metadata from the target page on demand
-- Bulk refresh metadata for selected links
-- Resolve canonical URLs and detect redirects
-- Extract Open Graph data where available
-- Detect page language and content type (article, video, tool, repo, documentation, paper, etc.)
-- Gracefully handle metadata fetch failures
+### AI Augmentation — Intelligence, On Your Terms
+Optional. Configurable. Yours to control:
+- AI-suggested tags from titles, descriptions, URLs
+- AI-generated summaries for quick scanning
+- AI content-type classification when metadata fails
+- AI duplicate detection using semantic similarity
+- Privacy modes: strict (review everything) or relaxed (automate freely)
+- Per-feature toggles — use AI where it helps, skip it where it doesn't
 
-### AI Features (Optional, via VoidAI)
-All AI features are **opt-in** and require you to configure your own OpenAI-compatible API endpoint and key. No data is sent to AI unless you explicitly enable it.
+*AI requires your own OpenAI-compatible provider. We don't bundle, track, or monetize your usage. Configure once, enrich forever.*
 
-- AI-powered tag suggestions from title, description, and URL
-- AI-generated summaries of saved pages
-- AI-suggested categories
-- AI content-type classification
-- AI duplicate detection based on semantic similarity
-- AI-generated titles when metadata is poor
-- Configurable privacy mode (strict vs relaxed)
-- Per-feature toggles — enable only the AI capabilities you want
+### Portability — Your Data, Your Rules
+The vault is yours. Truly:
+- Export everything as JSON — human-readable, machine-parseable
+- Import back, merging or replacing as you choose
+- Dated exports for versioned backups
+- Dry-run imports to preview changes
+- No lock-in. No proprietary formats. Just data, where you want it.
 
-### Import, Export & Backup
-- Export entire vault as JSON with optional secret inclusion
-- Import JSON exports back into the vault
-- Merge import mode (adds to existing data)
-- Replace import mode (wipes and restores)
-- Duplicate handling rules during import
-- Dry-run import preview with validation
-- Dated export filenames for versioned backups
-- Import browser bookmark HTML files (coming soon)
-- Export CSV for spreadsheet workflows (coming soon)
-
-### Bulk Actions
-- Multi-select links via checkboxes
-- Bulk tag assignment and removal
-- Bulk category assignment
-- Bulk move to collection
-- Bulk archive / unarchive
-- Bulk delete
+### Bulk Power — Taming the Many
+When organization means moving mountains:
+- Multi-select with checkboxes
+- Bulk tagging, categorizing, collecting
+- Bulk archive, unarchive, favorite, unfavorite
 - Bulk metadata refresh
-- Bulk favorite / unfavorite
-- Bulk mark as read / unread
+- Bulk delete (with confirmation, because we're careful)
 - Bulk priority changes
 
-### Analytics & Insights
-- Total links, favorites, unread, and archived counts
-- Read status breakdown with segmented progress bars
-- Vault quality metrics (AI enriched, never opened, broken links)
-- Top tags, top domains, and category distribution
-- Domain-level save and open counts
+### Insight — Understanding Your Vault
+Numbers that tell stories:
+- Total links, favorites, unread, archived
+- Reading progress with segmented visual bars
+- Vault health: AI coverage, never-opened links, broken links
+- Top tags, dominant domains, category balance
 - Metadata coverage tracking
+- Activity patterns — how you save, when you return
 
-### Maintenance & Cleanup
-- **Duplicate detector** — Find links with identical normalized URLs
-- **Broken link checker** — Identify links marked as broken
-- **Missing metadata** — Find links without titles or descriptions
-- **Uncategorized links** — Find inbox items without a category
-- **Untagged links** — Find active links with no tags
-- **Orphan tags** — Tags with no associated links
-- **Empty categories** — Categories with no links
-- One-click cleanup actions for each issue type
+### Maintenance — Keeping Things Healthy
+Software for tidying:
+- **Duplicate detector** — Find the twins and near-twins
+- **Broken link checker** — Know when destinations disappear
+- **Missing metadata finder** — Surface the mysteries
+- **Uncategorized hunter** — Inbox items waiting for homes
+- **Untagged scout** — Links that need labeling
+- **Orphan tag cleanup** — Tags without links, links without tags
+- **Empty category pruning** — Clean slate for clean thinking
 
-### App Settings
-- **Theme** — Dark, light, or system preference
-- **Default view** — List or grid
-- **Favicon display** — Show or hide site icons
-- **Metadata timeout** — Configurable fetch timeout
-- **Destructive confirmation** — Toggle confirmation dialogs
-- **AI configuration** — Base URL, API key, model selection, auto-enrich, privacy mode, feature toggles
-- **Keyboard shortcuts** — Command palette via `Cmd/Ctrl + K`
+### Settings — Make It Yours
+- **Theme** — Dark (OLED black), light (warm paper), or follow the system
+- **Default view** — List or grid, your preference
+- **Favicon display** — Show site icons or go minimal
+- **Metadata timeout** — How long to wait for the web
+- **Destructive confirmation** — Safety nets, optional
+- **AI configuration** — Your provider, your key, your model
+- **Keyboard shortcuts** — `Cmd/Ctrl + K` command palette for speed
 
-### Command Palette
-- Press `Cmd/Ctrl + K` anywhere in the app
+### Command Palette — Speed of Thought
+`Cmd/Ctrl + K` from anywhere:
 - Jump to any view instantly
 - Search and open links by title or domain
-- Fast navigation without reaching for the mouse
+- Navigate without the mouse
+- The fastest path to what you need
 
-## Tech Stack
+## The Craft Behind LinkVault
+
+### Tech Stack
 
 | Layer | Technology |
 |-------|------------|
@@ -158,24 +154,25 @@ All AI features are **opt-in** and require you to configure your own OpenAI-comp
 | State | React hooks with localStorage persistence |
 | AI | OpenAI-compatible API (VoidAI, OpenAI, etc.) |
 
-## Design System
+### Design System — Nothing, But Warmer
 
-LinkVault uses a custom design system inspired by Nothing's industrial aesthetic:
+LinkVault draws from the industrial precision of Nothing's aesthetic, then adds a human pulse:
 
-- **Monochrome palette** — OLED black backgrounds, precise gray scale hierarchy
-- **Typography-driven hierarchy** — Space Grotesk and Space Mono for Swiss precision
-- **Dot-matrix motif** — Decorative grid patterns for visual texture
-- **Segmented progress bars** — Mechanical, instrument-like data visualization
-- **No shadows, no gradients, no blur** — Flat surfaces, border separation
-- **Asymmetric composition** — Deliberately unbalanced layouts with confident negative space
+- **Monochrome foundation** — OLED black, layered grays, white heat for accents. Color when you need attention, absence when you need calm.
+- **Typography as architecture** — Space Grotesk carries meaning; Space Mono handles data. Doto appears for moments of display.
+- **Dot-matrix rhythm** — Those tiny grids of light that suggest instrumentation, measurement, care.
+- **Segmented progress** — Not smooth gradients but discrete steps, honest about approximation.
+- **Flat surfaces, honest borders** — No shadows pretending depth, no blur hiding imprecision. What you see is what exists.
+- **Asymmetric balance** — Heavy elements paired with vast emptiness. Confidence through contrast.
 
 ## Getting Started
 
-### Prerequisites
+### What You Need
 - Node.js 20+
-- npm or equivalent package manager
+- A terminal
+- Curiosity
 
-### Installation
+### Bring It To Life
 
 ```bash
 # Clone the repository
@@ -189,7 +186,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000). The vault awaits.
 
 ### Build for Production
 
@@ -197,9 +194,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build
 ```
 
-The static export is generated in the `out/` directory.
+Static export lands in `out/`. Portable. Self-contained. Yours.
 
-### Lint and Format
+### Keep It Clean
 
 ```bash
 npm run lint
@@ -209,115 +206,111 @@ npm run format
 
 ## Configuration
 
-### Environment Variables
+### Environment (Optional, for AI)
 
-Create a `.env.local` file (or use `.env.example` as a template):
+Create `.env.local`:
 
 ```bash
-# Optional: AI configuration via VoidAI or any OpenAI-compatible provider
+# AI configuration — entirely optional
 VOIDAI_BASE_URL=https://api.openai.com/v1
 VOIDAI_API_KEY=your-api-key-here
 VOIDAI_MODEL=gpt-4o-mini
 VOIDAI_AUTO_ENRICH=false
 ```
 
-**Note:** AI features are completely optional. The app works 100% offline without any API key.
+**Important:** LinkVault is complete without AI. Every feature works offline, forever.
 
-### AI Setup
+### Enabling AI
 
-1. Go to **Settings > AI Configuration**
-2. Enable AI
-3. Enter your base URL (e.g., `https://api.openai.com/v1`)
-4. Enter your API key
-5. Choose a model (e.g., `gpt-4o-mini`)
-6. Toggle individual AI features on/off
-7. Set privacy mode to **strict** (review what's sent) or **relaxed** (auto-send)
+1. Settings → AI Configuration
+2. Enable, provide your endpoint
+3. Choose what AI touches (tags? summaries? everything?)
+4. Set privacy mode: strict (review each request) or relaxed (automate freely)
+5. Your data, your provider, your terms
 
-## Data Model
+## Data Architecture
 
-LinkVault persists all data to `localStorage` under the key `linkvault_v2`. The schema is versioned for future migrations.
+Everything lives in `localStorage` under `linkvault_v2`. Versioned. Migrations handled automatically.
 
-### Core Entities
+### The Entities
 
-- **Link** — URL, metadata, tags, category, collections, notes, read status, priority, reminders, health, open count
-- **Category** — Named group, one per link
-- **Tag** — Named label, many per link
-- **Collection** — Manual folder, many per link
-- **Workspace** — Project-level grouping
-- **Saved Filter** — Reusable search + filter + sort combination
-- **Domain Profile** — Per-domain defaults and notes
-- **Activity Log** — Audit trail of changes
-- **Settings** — App preferences and AI configuration
+- **Link** — The core. URLs, metadata, organization, history, health.
+- **Category** — Broad buckets (one per link)
+- **Tag** — Flexible labels (many per link)
+- **Collection** — Project folders (many per link)
+- **Workspace** — Context switches
+- **Domain Profile** — Rules per source site
+- **Activity Log** — What happened, when
 
 ### Portability
 
-Your entire vault is a single JSON object. Export it anytime from **Settings > Export JSON**. The export excludes your AI API key by default for security.
+Export anytime. JSON format, human-readable. API keys stripped by default. Move between devices. Archive offline. Keep forever.
 
-## Architecture
+## How It's Built
 
 ```
 app/
-├── components/          # UI components (Nothing design system)
-├── hooks/             # React hooks (vault state, view state)
+├── components/          # UI pieces, designed with care
+├── hooks/               # State management, vault logic
 ├── lib/
-│   ├── types.ts       # TypeScript definitions
-│   ├── db.ts          # localStorage persistence layer
-│   ├── utils.ts       # URL parsing, formatting, helpers
-│   ├── metadata.ts    # Page metadata fetching
-│   └── ai.ts          # VoidAI integration
-├── page.tsx           # Main app shell
-├── layout.tsx         # Root layout with fonts
-└── globals.css        # Design tokens and Tailwind theme
+│   ├── types.ts         # TypeScript contracts
+│   ├── db.ts            # localStorage layer
+│   ├── utils.ts         # URL parsing, formatting
+│   ├── metadata.ts      # Web page enrichment
+│   └── ai.ts            # AI integration
+├── page.tsx             # The app
+├── layout.tsx           # Root shell, fonts
+└── globals.css          # Design tokens
 ```
 
-### Key Decisions
+### Decisions We Stand By
 
-- **No server-side rendering for data** — Everything is client-side to guarantee privacy and offline capability
-- **Debounced saves** — localStorage writes are batched with a 300ms debounce to avoid performance issues
-- **Immutable updates** — All state changes create new objects for predictable React rendering
-- **Graceful degradation** — AI and metadata fetching fail silently without blocking core workflows
-- **Schema versioning** — Local data includes a version number for automatic migrations
+- **Client-side only** — No server handling your data. Privacy by architecture.
+- **Debounced persistence** — 300ms batching. Responsive feel, safe saves.
+- **Immutable updates** — Predictable state, predictable UI.
+- **Graceful degradation** — AI fails? Metadata times out? Core app continues.
+- **Schema versioning** — Future you will thank present you.
 
-## Privacy & Security
+## Privacy — The Non-Negotiable
 
-- **No cloud database** — Nothing is stored on remote servers
-- **No analytics or tracking** — No telemetry, cookies, or external scripts
-- **AI data control** — Only text you explicitly choose to enrich is sent to your AI provider. API keys are stored in `localStorage` and never exported.
-- **Strict privacy mode** — Shows you exactly what will be sent to the AI before each request
-- **Export excludes secrets** — Your API key is stripped from exports by default
+- **No cloud** — Your device, your data.
+- **No tracking** — No analytics, cookies, beacons, or telemetry.
+- **AI on your terms** — Only what you approve, only where you point it.
+- **Export safety** — API keys don't travel with exports unless you explicitly include them.
 
-## Roadmap
+## What's Here, What's Coming
 
-### Completed
-- [x] Local-first data model with schema versioning
-- [x] Link capture with metadata fetching
-- [x] Full-text search and advanced filtering
-- [x] Tags, categories, and collections
-- [x] Favorites, archive, and read status
-- [x] Bulk actions
-- [x] Import / export JSON
-- [x] Analytics dashboard
-- [x] Maintenance and cleanup center
+### Now
+- [x] Local-first data, versioned, migratable
+- [x] Link capture with rich metadata fetching
+- [x] Full-text search across everything
+- [x] Creative visual filters with dot-matrix precision
+- [x] Tags, categories, collections, workspaces
+- [x] Favorites, archive, read status, priority
+- [x] Bulk operations for power users
+- [x] JSON import/export, merge or replace
+- [x] Analytics and vault health insights
+- [x] Maintenance center for cleanup
 - [x] Command palette (`Cmd/Ctrl + K`)
-- [x] Dark / light theme
-- [x] Optional AI enrichment (tag suggestions, summaries, categorization)
-- [x] Domain intelligence view
+- [x] Dark/light/system themes
+- [x] Optional AI enrichment (tags, summaries, categorization)
+- [x] Domain intelligence and profiles
 
-### Upcoming
+### Next
 - [ ] Browser bookmark HTML import/export
-- [ ] CSV import/export
-- [ ] Saved filter presets and smart collections
-- [ ] Reminder and revisit system
-- [ ] Broken-link checker with automatic health updates
-- [ ] Rule-based auto-tagging and auto-categorization
+- [ ] CSV workflows
+- [ ] Saved filter presets, smart collections
+- [ ] Reminder system with revisit queues
+- [ ] Automatic broken-link detection
+- [ ] Rule-based auto-organization
 - [ ] Link relations and backlinking
-- [ ] Session notes for research bursts
-- [ ] Keyboard shortcut customization
-- [ ] PWA support for offline installation
+- [ ] Research session notes
+- [ ] Custom keyboard shortcuts
+- [ ] PWA for true offline installation
 
 ## Contributing
 
-Contributions are welcome. Please open an issue to discuss significant changes before submitting a pull request.
+Issues and pull requests welcome. For significant changes, open an issue first — let's discuss.
 
 ## License
 
@@ -325,4 +318,4 @@ MIT — See [LICENSE](./LICENSE) for details.
 
 ---
 
-**Built with precision. Designed for permanence.**
+*Built with precision. Kept with care. Yours forever.*

@@ -25,12 +25,12 @@ export function NDModal({ open, onClose, title, children, maxWidth = "480px" }: 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto"
       style={{ background: "rgba(0,0,0,0.8)" }}
       onClick={onClose}
     >
       <div
-        className="bg-surface border border-border-visible rounded-2xl p-6 w-full relative"
+        className="bg-surface border border-border-visible rounded-2xl p-6 w-full relative my-8"
         style={{ maxWidth }}
         onClick={(e) => e.stopPropagation()}
       >

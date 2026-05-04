@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useVault, useViewState } from "./hooks/useVault";
 import { Sidebar } from "./components/Sidebar";
 import { LibraryView } from "./components/LibraryView";
@@ -15,6 +15,7 @@ import { RemindersView } from "./components/RemindersView";
 import { ActivityLogView } from "./components/ActivityLogView";
 import { SmartFiltersView } from "./components/SmartFiltersView";
 import { WorkspacesView } from "./components/WorkspacesView";
+import { KeyboardShortcutsDialog } from "./components/KeyboardShortcutsDialog";
 import { updateLink, deleteLink } from "./lib/db";
 import type { LinkEntity, ViewType } from "./lib/types";
 
@@ -36,6 +37,10 @@ export default function Home() {
   const [captureOpen, setCaptureOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<LinkEntity | null>(null);
   const [commandOpen, setCommandOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [selectedLinkId, setSelectedLinkId] = useState<string | null>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!ready || !data) return;
@@ -48,16 +53,159 @@ export default function Home() {
     }
   }, [ready, data?.settings.theme]);
 
+  // Global keyboard shortcuts
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      const isMod = e.metaKey || e.ctrlKey;
+      const isShift = e.shiftKey;
+      const key = e.key.toLowerCase();
+
+      // Command palette: Cmd/Ctrl + K
+      if (isMod && key === "k") {
         e.preventDefault();
         setCommandOpen((o) => !o);
+        return;
+      }
+
+      // Keyboard shortcuts dialog: Cmd/Ctrl + /
+      if (isMod && key === "/") {
+        e.preventDefault();
+        setShortcutsOpen((o) => !o);
+        return;
+      }
+
+      // Capture new link: Cmd/Ctrl + N
+      if (isMod && key === "n") {
+        e.preventDefault();
+        setCaptureOpen(true);
+        return;
+      }
+
+      // Focus search: Cmd/Ctrl + F or /
+      if ((isMod && key === "f") || (key === "/" && !isMod && !isShift)) {
+        // Don't trigger if in an input
+        if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+        e.preventDefault();
+        searchRef.current?.focus();
+        return;
+      }
+
+      // Navigation shortcuts 1-9 for views
+      if (isMod && key >= "1" && key <= "9") {
+        e.preventDefault();
+        const viewMap: Record<string, ViewType> = {
+          "1": "library",
+          "2": "inbox",
+          "3": "favorites",
+          "4": "reading",
+          "5": "archived",
+          "6": "reminders",
+          "7": "analytics",
+          "8": "settings",
+        };
+        const targetView = viewMap[key];
+        if (targetView) {
+          setView(targetView);
+          clearSelection();
+          setSelectedLinkId(null);
+        }
+        return;
+      }
+
+      // Escape: close modals and clear selection
+      if (key === "escape") {
+        if (shortcutsOpen) {
+          setShortcutsOpen(false);
+          return;
+        }
+        if (commandOpen) {
+          setCommandOpen(false);
+          return;
+        }
+        if (captureOpen) {
+          setCaptureOpen(false);
+          return;
+        }
+        if (editingLink) {
+          setEditingLink(null);
+          return;
+        }
+        if (selectedIds.size > 0) {
+          clearSelection();
+          return;
+        }
+        if (selectedLinkId) {
+          setSelectedLinkId(null);
+          return;
+        }
+        return;
+      }
+
+      // Don't process link-specific shortcuts if no link selected or in input
+      if (!selectedLinkId || e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      const link = data?.links.find((l) => l.id === selectedLinkId);
+      if (!link) return;
+
+      // E: Edit selected link
+      if (key === "e" && !isMod) {
+        e.preventDefault();
+        setEditingLink(link);
+        return;
+      }
+
+      // F: Toggle favorite
+      if (key === "f" && !isMod) {
+        e.preventDefault();
+        if (data) {
+          setData(updateLink(data, link.id, { favorite: !link.favorite }));
+        }
+        return;
+      }
+
+      // A: Toggle archive
+      if (key === "a" && !isMod) {
+        e.preventDefault();
+        if (data) {
+          setData(updateLink(data, link.id, { archived: !link.archived }));
+        }
+        return;
+      }
+
+      // R: Toggle read status
+      if (key === "r" && !isMod) {
+        e.preventDefault();
+        if (data) {
+          const nextStatus = link.readStatus === "unread" ? "reading" : link.readStatus === "reading" ? "read" : "unread";
+          setData(updateLink(data, link.id, { readStatus: nextStatus }));
+        }
+        return;
+      }
+
+      // Enter: Open link
+      if (key === "enter" && !isMod) {
+        e.preventDefault();
+        window.open(link.url, "_blank");
+        if (data) {
+          setData(updateLink(data, link.id, { openCount: link.openCount + 1, lastOpenedAt: new Date().toISOString() }));
+        }
+        return;
+      }
+
+      // Delete: Delete link
+      if ((key === "delete" || key === "backspace") && !isMod) {
+        e.preventDefault();
+        if (data && confirm("Delete this link?")) {
+          setData(deleteLink(data, link.id));
+          setSelectedLinkId(null);
+        }
+        return;
       }
     };
+
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, []);
+  }, [commandOpen, shortcutsOpen, captureOpen, editingLink, selectedLinkId, selectedIds, data, setData, setView, clearSelection]);
 
   const counts = {
     library: data?.links.filter((l) => !l.archived).length || 0,
@@ -136,12 +284,14 @@ export default function Home() {
         onChangeView={navigate}
         onOpenCapture={() => setCaptureOpen(true)}
         onOpenCommand={() => setCommandOpen(true)}
+        onOpenShortcuts={() => setShortcutsOpen(true)}
         counts={counts}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {view === "library" && (
           <LibraryView
+            ref={searchRef}
             data={data}
             onUpdate={setData}
             filter={filter}
@@ -158,6 +308,7 @@ export default function Home() {
         )}
         {view === "inbox" && (
           <LibraryView
+            ref={searchRef}
             data={data}
             onUpdate={setData}
             filter={{ ...filter, query: "", category: undefined }}
@@ -177,6 +328,7 @@ export default function Home() {
         )}
         {view === "favorites" && (
           <LibraryView
+            ref={searchRef}
             data={data}
             onUpdate={setData}
             filter={{ ...filter, query: "" }}
@@ -196,6 +348,7 @@ export default function Home() {
         )}
         {view === "reading" && (
           <LibraryView
+            ref={searchRef}
             data={data}
             onUpdate={setData}
             filter={{ ...filter, query: "" }}
@@ -215,6 +368,7 @@ export default function Home() {
         )}
         {view === "archived" && (
           <LibraryView
+            ref={searchRef}
             data={data}
             onUpdate={setData}
             filter={{ ...filter, query: "" }}
@@ -254,6 +408,7 @@ export default function Home() {
         onNavigate={navigate}
         onOpenLink={handleOpenLink}
       />
+      <KeyboardShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </main>
   );
 }

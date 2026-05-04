@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { forwardRef } from "react";
 import type { VaultData, FilterState, SortOption, LinkEntity } from "../lib/types";
 import { getLinksByFilter, updateLink, bulkUpdateLinks, bulkDeleteLinks } from "../lib/db";
 import { SearchBar } from "./SearchBar";
@@ -10,6 +10,7 @@ import { BulkActions } from "./BulkActions";
 import { NDEmptyState } from "./NDEmptyState";
 import { formatNumber } from "../lib/utils";
 import { PlusIcon } from "./Icons";
+import { ShortcutHint } from "./ShortcutHint";
 
 interface LibraryViewProps {
   data: VaultData;
@@ -29,23 +30,24 @@ interface LibraryViewProps {
   prefiltered?: string[];
 }
 
-export function LibraryView({
-  data,
-  onUpdate,
-  filter,
-  sort,
-  onChangeFilter,
-  onChangeSort,
-  selectedIds,
-  onToggleSelect,
-  onSelectAll,
-  onClearSelection,
-  onOpenCapture,
-  onEditLink,
-  title = "Library",
-  subtitle = "All saved links",
-  prefiltered,
-}: LibraryViewProps) {
+export const LibraryView = forwardRef<HTMLInputElement, LibraryViewProps>(
+  function LibraryView({
+    data,
+    onUpdate,
+    filter,
+    sort,
+    onChangeFilter,
+    onChangeSort,
+    selectedIds,
+    onToggleSelect,
+    onSelectAll,
+    onClearSelection,
+    onOpenCapture,
+    onEditLink,
+    title = "Library",
+    subtitle = "All saved links",
+    prefiltered,
+  }, searchRef) {
   const resolvedFilter: FilterState = {
     ...filter,
     tags: filter.tags.map((name) => data.tags.find((t) => t.name === name)?.id).filter(Boolean) as string[],
@@ -128,7 +130,7 @@ export function LibraryView({
           <span className="font-mono text-[12px] text-text-disabled">{formatNumber(visibleLinks.length)} links</span>
         </div>
 
-        <SearchBar value={filter.query} onChange={(q) => onChangeFilter({ ...filter, query: q })} />
+        <SearchBar ref={searchRef} value={filter.query} onChange={(q) => onChangeFilter({ ...filter, query: q })} />
 
         <FilterBar
           filter={filter}
@@ -188,4 +190,5 @@ export function LibraryView({
       </div>
     </div>
   );
-}
+  }
+);

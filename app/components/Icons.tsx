@@ -272,3 +272,10 @@ export const ZapIcon = (p: IconProps) => (
     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
   </Icon>
 );
+
+export const KeyboardIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect width="20" height="16" x="2" y="4" rx="2" />
+    <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10" />
+  </Icon>
+);

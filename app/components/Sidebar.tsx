@@ -20,13 +20,16 @@ import {
   ActivityIcon,
   FilterIcon,
   LayersIcon,
+  KeyboardIcon,
 } from "./Icons";
+import { ShortcutHint } from "./ShortcutHint";
 
 interface SidebarProps {
   view: ViewType;
   onChangeView: (v: ViewType) => void;
   onOpenCapture: () => void;
   onOpenCommand: () => void;
+  onOpenShortcuts?: () => void;
   counts: {
     library: number;
     inbox: number;
@@ -56,7 +59,7 @@ const navItems: { view: ViewType; label: string; icon: React.FC<Parameters<typeo
   { view: "settings", label: "Settings", icon: SettingsIcon },
 ];
 
-export function Sidebar({ view, onChangeView, onOpenCapture, onOpenCommand, counts }: SidebarProps) {
+export function Sidebar({ view, onChangeView, onOpenCapture, onOpenCommand, onOpenShortcuts, counts }: SidebarProps) {
   return (
     <aside className="hidden md:flex flex-col w-[220px] border-r border-border bg-black shrink-0">
       <div className="p-5 border-b border-border">
@@ -117,15 +120,29 @@ export function Sidebar({ view, onChangeView, onOpenCapture, onOpenCommand, coun
         })}
       </nav>
 
-      <div className="p-3 border-t border-border">
+      <div className="p-3 border-t border-border flex flex-col gap-1">
         <button
           onClick={onOpenCommand}
           className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors text-left"
         >
           <CommandIcon size={16} />
           <span className="font-mono text-[11px] uppercase tracking-[0.08em]">Command</span>
-          <span className="ml-auto font-mono text-[10px] text-text-disabled border border-border px-1 rounded">⌘K</span>
+          <span className="ml-auto">
+            <ShortcutHint keys={["mod", "k"]} />
+          </span>
         </button>
+        {onOpenShortcuts && (
+          <button
+            onClick={onOpenShortcuts}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors text-left"
+          >
+            <KeyboardIcon size={16} />
+            <span className="font-mono text-[11px] uppercase tracking-[0.08em]">Shortcuts</span>
+            <span className="ml-auto">
+              <ShortcutHint keys={["mod", "/"]} />
+            </span>
+          </button>
+        )}
       </div>
     </aside>
   );

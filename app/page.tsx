@@ -61,28 +61,28 @@ export default function Home() {
       const key = e.key.toLowerCase();
 
       // Command palette: Cmd/Ctrl + K
-      if (isMod && key === "k") {
+      if (isMod && key === "k" && !isShift) {
         e.preventDefault();
         setCommandOpen((o) => !o);
         return;
       }
 
       // Keyboard shortcuts dialog: Cmd/Ctrl + /
-      if (isMod && key === "/") {
+      if (isMod && key === "/" && !isShift) {
         e.preventDefault();
         setShortcutsOpen((o) => !o);
         return;
       }
 
-      // Capture new link: Cmd/Ctrl + N
-      if (isMod && key === "n") {
+      // Capture new link: Cmd/Ctrl + Shift + N (avoid collision with new window)
+      if (isMod && isShift && key === "n") {
         e.preventDefault();
         setCaptureOpen(true);
         return;
       }
 
-      // Focus search: Cmd/Ctrl + F or /
-      if ((isMod && key === "f") || (key === "/" && !isMod && !isShift)) {
+      // Focus search: Cmd/Ctrl + Shift + F (avoid collision with browser find) or /
+      if ((isMod && isShift && key === "f") || (key === "/" && !isMod && !isShift)) {
         // Don't trigger if in an input
         if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
         e.preventDefault();
@@ -90,8 +90,8 @@ export default function Home() {
         return;
       }
 
-      // Navigation shortcuts 1-9 for views
-      if (isMod && key >= "1" && key <= "9") {
+      // Navigation shortcuts Cmd/Ctrl + Shift + 1-8 for views (avoid collision with browser tabs)
+      if (isMod && isShift && key >= "1" && key <= "8") {
         e.preventDefault();
         const viewMap: Record<string, ViewType> = {
           "1": "library",

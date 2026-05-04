@@ -130,7 +130,12 @@ export const LibraryView = forwardRef<HTMLInputElement, LibraryViewProps>(
           <span className="font-mono text-[12px] text-text-disabled">{formatNumber(visibleLinks.length)} links</span>
         </div>
 
-        <SearchBar ref={searchRef} value={filter.query} onChange={(q) => onChangeFilter({ ...filter, query: q })} />
+        <div className="relative">
+          <SearchBar ref={searchRef} value={filter.query} onChange={(q) => onChangeFilter({ ...filter, query: q })} />
+          <div className="absolute right-10 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
+            <ShortcutHint keys={["mod", "shift", "f"]} className="opacity-40" />
+          </div>
+        </div>
 
         <FilterBar
           filter={filter}

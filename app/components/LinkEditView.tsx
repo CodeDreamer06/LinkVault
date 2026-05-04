@@ -7,8 +7,8 @@ import { NDInput } from "./NDInput";
 import { NDButton } from "./NDButton";
 import { NDTag } from "./NDTag";
 import { updateLink, upsertCategory, upsertTag, upsertCollection } from "../lib/db";
-import { formatDate } from "../lib/utils";
-import { CheckIcon, XIcon, TrashIcon, ExternalLinkIcon, CopyIcon } from "./Icons";
+import { formatDate, generateId } from "../lib/utils";
+import { CheckIcon, XIcon, TrashIcon, ExternalLinkIcon, CopyIcon, BellIcon } from "./Icons";
 import { fetchMetadata, enrichLinkWithMetadata } from "../lib/metadata";
 
 interface LinkEditViewProps {
@@ -31,6 +31,7 @@ export function LinkEditView({ link, onClose, data, onUpdate, onDelete }: LinkEd
   const [favorite, setFavorite] = useState<boolean>(false);
   const [archived, setArchived] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [newReminderDate, setNewReminderDate] = useState<string>("");
 
   useEffect(() => {
     if (link) {
@@ -47,6 +48,7 @@ export function LinkEditView({ link, onClose, data, onUpdate, onDelete }: LinkEd
       setReadStatus(link.readStatus);
       setFavorite(link.favorite);
       setArchived(link.archived);
+      setNewReminderDate("");
     }
   }, [link, data]);
 
@@ -200,6 +202,73 @@ export function LinkEditView({ link, onClose, data, onUpdate, onDelete }: LinkEd
           <span>Updated {formatDate(link.updatedAt)}</span>
           <span>|</span>
           <span>Opened {link.openCount} times</span>
+        </div>
+
+        {/* Related Links */}
+        {(() => {
+          const related = data.links.filter((l) => {
+            if (l.id === link.id) return false;
+            if (l.domain === link.domain) return true;
+            const sharedTags = l.tags.filter((t) => link.tags.includes(t));
+            return sharedTags.length > 0;
+          }).slice(0, 5);
+          if (related.length === 0) return null;
+          return (
+            <div className="border-t border-border pt-4">
+              <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-secondary block mb-2">Related</span>
+              <div className="flex flex-col gap-1">
+                {related.map((l) => (
+                  <div key={l.id} className="flex items-center justify-between py-1">
+                    <span className="font-sans text-[13px] text-text-primary truncate max-w-[380px]">{l.title}</span>
+                    <span className="font-mono text-[10px] text-text-disabled">{l.domain === link.domain ? "same domain" : "shared tag"}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Reminders */}
+        <div className="border-t border-border pt-4">
+          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-secondary block mb-2">Reminders</span>
+          {link.reminders.length > 0 && (
+            <div className="flex flex-col gap-1 mb-3">
+              {link.reminders.map((r) => (
+                <div key={r.id} className="flex items-center justify-between py-1">
+                  <span className={`font-mono text-[12px] ${r.completed ? "text-text-disabled line-through" : "text-text-secondary"}`}>
+                    {formatDate(r.date)} {r.type === "recurring" && "(recurring)"}
+                  </span>
+                  <NDButton size="sm" variant="ghost" onClick={() => {
+                    const updated = link.reminders.filter((x) => x.id !== r.id);
+                    onUpdate(updateLink(data, link.id, { reminders: updated }));
+                  }}>
+                    <TrashIcon size={12} />
+                  </NDButton>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={newReminderDate}
+              onChange={(e) => setNewReminderDate(e.target.value)}
+              className="bg-transparent border-b border-border-visible text-text-primary font-mono text-[12px] py-1 px-1 outline-none focus:border-text-primary"
+            />
+            <NDButton size="sm" variant="secondary" onClick={() => {
+              if (!newReminderDate) return;
+              const reminder = {
+                id: generateId(),
+                type: "one-time" as const,
+                date: new Date(newReminderDate).toISOString(),
+                completed: false,
+              };
+              onUpdate(updateLink(data, link.id, { reminders: [...link.reminders, reminder] }));
+              setNewReminderDate("");
+            }}>
+              <BellIcon size={12} /> Add
+            </NDButton>
+          </div>
         </div>
 
         <div className="flex items-center gap-3 mt-2">

@@ -11,6 +11,10 @@ import { AnalyticsView } from "./components/AnalyticsView";
 import { SettingsView } from "./components/SettingsView";
 import { MaintenanceView } from "./components/MaintenanceView";
 import { TagsView, CategoriesView, CollectionsView, DomainsView } from "./components/OrganizationViews";
+import { RemindersView } from "./components/RemindersView";
+import { ActivityLogView } from "./components/ActivityLogView";
+import { SmartFiltersView } from "./components/SmartFiltersView";
+import { WorkspacesView } from "./components/WorkspacesView";
 import { updateLink, deleteLink } from "./lib/db";
 import type { LinkEntity, ViewType } from "./lib/types";
 
@@ -61,6 +65,7 @@ export default function Home() {
     favorites: data?.links.filter((l) => l.favorite && !l.archived).length || 0,
     reading: data?.links.filter((l) => l.readStatus === "reading" && !l.archived).length || 0,
     archived: data?.links.filter((l) => l.archived).length || 0,
+    reminders: data?.links.reduce((acc, l) => acc + l.reminders.filter((r) => !r.completed && (!r.snoozedUntil || new Date(r.snoozedUntil) <= new Date())).length, 0) || 0,
   };
 
   const handleOpenLink = useCallback(
@@ -234,6 +239,10 @@ export default function Home() {
         {view === "categories" && <CategoriesView data={data} onUpdate={setData} onFilterByCategory={handleFilterByCategory} />}
         {view === "collections" && <CollectionsView data={data} onUpdate={setData} onFilterByCollection={handleFilterByCollection} />}
         {view === "domains" && <DomainsView data={data} onUpdate={setData} />}
+        {view === "reminders" && <RemindersView data={data} onUpdate={setData} onOpenLink={handleOpenLink} onEditLink={setEditingLink} />}
+        {view === "activity" && <ActivityLogView data={data} />}
+        {view === "filters" && <SmartFiltersView data={data} onUpdate={setData} onApplyFilter={(f, s) => { setFilter(f); setSort(s); setView("library"); }} />}
+        {view === "workspaces" && <WorkspacesView data={data} onUpdate={setData} onEditLink={setEditingLink} />}
       </div>
 
       <CaptureView open={captureOpen} onClose={() => setCaptureOpen(false)} data={data} onUpdate={setData} />

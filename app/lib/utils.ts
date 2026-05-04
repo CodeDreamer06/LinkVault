@@ -150,3 +150,43 @@ export function groupBy<T>(items: T[], keyFn: (item: T) => string): Record<strin
   }
   return groups;
 }
+
+export function exportLinksToCSV(links: { title: string; url: string; description?: string; tags: string[]; category?: string; createdAt: string }[]): string {
+  const headers = ["Title", "URL", "Description", "Tags", "Category", "Created"];
+  const rows = links.map((l) => [
+    `"${(l.title || "").replace(/"/g, '""')}"`,
+    `"${l.url}"`,
+    `"${(l.description || "").replace(/"/g, '""')}"`,
+    `"${l.tags.join(", ")}"`,
+    `"${l.category || ""}"`,
+    `"${l.createdAt}"`,
+  ]);
+  return [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+}
+
+export function parseBookmarkHTML(html: string): Array<{ title: string; url: string; folder?: string }> {
+  const results: Array<{ title: string; url: string; folder?: string }> = [];
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const anchors = doc.querySelectorAll("a");
+  for (const a of anchors) {
+    const url = a.getAttribute("href");
+    const title = a.textContent?.trim() || "";
+    if (url && title) {
+      let folder: string | undefined;
+      let parent = a.parentElement;
+      while (parent) {
+        if (parent.tagName === "DL") {
+          const prev = parent.previousElementSibling;
+          if (prev && prev.tagName === "H3") {
+            folder = prev.textContent?.trim() || undefined;
+            break;
+          }
+        }
+        parent = parent.parentElement;
+      }
+      results.push({ title, url, folder });
+    }
+  }
+  return results;
+}

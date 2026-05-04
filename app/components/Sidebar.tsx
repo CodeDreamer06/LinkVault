@@ -16,6 +16,10 @@ import {
   FolderIcon,
   TagIcon,
   LinkIcon,
+  BellIcon,
+  ActivityIcon,
+  FilterIcon,
+  LayersIcon,
 } from "./Icons";
 
 interface SidebarProps {
@@ -29,6 +33,7 @@ interface SidebarProps {
     favorites: number;
     reading: number;
     archived: number;
+    reminders: number;
   };
 }
 
@@ -38,10 +43,15 @@ const navItems: { view: ViewType; label: string; icon: React.FC<Parameters<typeo
   { view: "favorites", label: "Favorites", icon: StarIcon },
   { view: "reading", label: "Reading", icon: BookOpenIcon },
   { view: "archived", label: "Archived", icon: ArchiveIcon },
+  { view: "reminders", label: "Reminders", icon: BellIcon },
+  { view: "workspaces", label: "Workspaces", icon: LayersIcon },
   { view: "domains", label: "Domains", icon: GlobeIcon },
   { view: "collections", label: "Collections", icon: FolderIcon },
   { view: "tags", label: "Tags", icon: TagIcon },
+  { view: "categories", label: "Categories", icon: TagIcon },
+  { view: "filters", label: "Filters", icon: FilterIcon },
   { view: "analytics", label: "Analytics", icon: BarChartIcon },
+  { view: "activity", label: "Activity", icon: ActivityIcon },
   { view: "maintenance", label: "Maintenance", icon: WrenchIcon },
   { view: "settings", label: "Settings", icon: SettingsIcon },
 ];
@@ -85,7 +95,9 @@ export function Sidebar({ view, onChangeView, onOpenCapture, onOpenCommand, coun
                     ? counts.reading
                     : item.view === "archived"
                       ? counts.archived
-                      : undefined;
+                      : item.view === "reminders"
+                        ? counts.reminders
+                        : undefined;
           return (
             <button
               key={item.view}

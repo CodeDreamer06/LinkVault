@@ -4,9 +4,9 @@ import React from "react";
 import type { VaultData } from "../lib/types";
 import { NDInput } from "./NDInput";
 import { NDButton } from "./NDButton";
-import { SunIcon, MoonIcon, DownloadIcon, UploadIcon } from "./Icons";
-import { exportVault, importVault } from "../lib/db";
-import { downloadFile, readFileAsText } from "../lib/utils";
+import { SunIcon, MoonIcon, DownloadIcon, UploadIcon, LinkIcon } from "./Icons";
+import { exportVault, importVault, createLink, upsertCategory, upsertCollection } from "../lib/db";
+import { downloadFile, readFileAsText, exportLinksToCSV, parseBookmarkHTML, normalizeUrl, extractDomain } from "../lib/utils";
 
 interface SettingsViewProps {
   data: VaultData;
@@ -37,6 +37,73 @@ export function SettingsView({ data, onUpdate }: SettingsViewProps) {
       alert("Import successful!");
     }
     onUpdate(next);
+  };
+
+  const handleExportCSV = () => {
+    const csv = exportLinksToCSV(
+      data.links.map((l) => ({
+        title: l.title,
+        url: l.url,
+        description: l.description,
+        tags: l.tags.map((tid) => data.tags.find((t) => t.id === tid)?.name || tid),
+        category: data.categories.find((c) => c.id === l.category)?.name,
+        createdAt: l.createdAt,
+      }))
+    );
+    const filename = `linkvault-${new Date().toISOString().slice(0, 10)}.csv`;
+    downloadFile(csv, filename, "text/csv");
+  };
+
+  const handleImportBookmarks = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const text = await readFileAsText(file);
+    const bookmarks = parseBookmarkHTML(text);
+    let next = data;
+    let imported = 0;
+    for (const bm of bookmarks) {
+      const normalized = normalizeUrl(bm.url);
+      const dup = next.links.find((l) => l.normalizedUrl === normalized);
+      if (dup) continue;
+      let catId: string | undefined;
+      if (bm.folder) {
+        const [d, id] = upsertCategory(next, bm.folder);
+        next = d;
+        catId = id;
+      }
+      const colIds: string[] = [];
+      if (bm.folder) {
+        const [d, id] = upsertCollection(next, bm.folder);
+        next = d;
+        colIds.push(id);
+      }
+      next = createLink(next, {
+        url: normalized,
+        normalizedUrl: normalized,
+        originalUrl: bm.url,
+        domain: extractDomain(normalized),
+        hostname: new URL(normalized).hostname,
+        title: bm.title || normalized,
+        description: undefined,
+        note: undefined,
+        tags: [],
+        category: catId,
+        collections: colIds,
+        contentType: "article",
+        openCount: 0,
+        archived: false,
+        favorite: false,
+        readStatus: "unread",
+        health: "active",
+        reminders: [],
+        priority: "medium",
+        confidence: 0,
+        aiEnriched: false,
+      });
+      imported++;
+    }
+    onUpdate(next);
+    alert(`Imported ${imported} bookmarks`);
   };
 
   const handleAIChange = (field: keyof typeof data.aiSettings, value: unknown) => {
@@ -70,7 +137,7 @@ export function SettingsView({ data, onUpdate }: SettingsViewProps) {
 
       <section className="flex flex-col gap-4">
         <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-secondary">Data</h3>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <NDButton variant="secondary" onClick={handleExport}>
             <DownloadIcon size={16} /> Export JSON
           </NDButton>
@@ -79,6 +146,15 @@ export function SettingsView({ data, onUpdate }: SettingsViewProps) {
               <UploadIcon size={16} /> Import JSON
             </NDButton>
             <input type="file" accept=".json" onChange={handleImport} className="hidden" />
+          </label>
+          <NDButton variant="secondary" onClick={handleExportCSV}>
+            <DownloadIcon size={16} /> Export CSV
+          </NDButton>
+          <label className="cursor-pointer">
+            <NDButton variant="secondary" onClick={() => {}}>
+              <LinkIcon size={16} /> Import Bookmarks
+            </NDButton>
+            <input type="file" accept=".html" onChange={handleImportBookmarks} className="hidden" />
           </label>
         </div>
         <p className="font-sans text-[13px] text-text-disabled">

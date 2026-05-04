@@ -6,7 +6,7 @@ interface NDButtonProps {
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "ghost" | "destructive";
   size?: "sm" | "md" | "lg";
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
   className?: string;
   type?: "button" | "submit";

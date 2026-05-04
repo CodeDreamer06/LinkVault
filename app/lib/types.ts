@@ -208,4 +208,8 @@ export type ViewType =
   | "domains"
   | "collections"
   | "tags"
-  | "categories";
+  | "categories"
+  | "reminders"
+  | "activity"
+  | "filters"
+  | "workspaces";

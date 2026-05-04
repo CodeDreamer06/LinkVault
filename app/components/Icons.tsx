@@ -239,3 +239,36 @@ export const MoreHorizontalIcon = (p: IconProps) => (
     <circle cx="5" cy="12" r="1" />
   </Icon>
 );
+
+export const BellIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+  </Icon>
+);
+
+export const ActivityIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+  </Icon>
+);
+
+export const FilterIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+  </Icon>
+);
+
+export const LayersIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <polygon points="12 2 2 7 12 12 22 7 12 2" />
+    <polyline points="2 17 12 22 22 17" />
+    <polyline points="2 12 12 17 22 12" />
+  </Icon>
+);
+
+export const ZapIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </Icon>
+);

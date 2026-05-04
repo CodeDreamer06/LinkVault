@@ -19,6 +19,39 @@ interface LinkEditViewProps {
   onDelete: (id: string) => void;
 }
 
+function DrawnCheckIcon({ size = 14, className = "" }: { size?: number; className?: string }) {
+  const [drawn, setDrawn] = useState(false);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setDrawn(true));
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        d="M20 6 9 17l-5-5"
+        style={{
+          strokeDasharray: 22,
+          strokeDashoffset: drawn ? 0 : 22,
+          transition: "stroke-dashoffset 220ms ease-out",
+        }}
+      />
+    </svg>
+  );
+}
+
 export function LinkEditView({ link, onClose, data, onUpdate, onDelete }: LinkEditViewProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState<string>("");
@@ -126,11 +159,13 @@ export function LinkEditView({ link, onClose, data, onUpdate, onDelete }: LinkEd
             <ExternalLinkIcon size={14} /> Open
           </NDButton>
           <NDButton size="sm" variant="secondary" onClick={handleCopy}>
-            {copied ? (
-              <CheckIcon size={14} className="text-green-500 animate-bounce" />
-            ) : (
-              <CopyIcon size={14} />
-            )}
+            <span className="inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center">
+              {copied ? (
+                <DrawnCheckIcon size={14} className="text-green-500" />
+              ) : (
+                <CopyIcon size={14} />
+              )}
+            </span>
             {copied ? "Copied!" : "Copy URL"}
           </NDButton>
           <NDButton size="sm" variant="secondary" onClick={handleRefreshMeta} disabled={refreshing}>

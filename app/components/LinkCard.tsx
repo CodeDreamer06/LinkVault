@@ -62,15 +62,14 @@ export function LinkCard({
     <>
       <div className="flex items-start gap-3">
         {onSelect && (
-          <input
-            type="checkbox"
-            checked={selected}
-            onChange={(e) => {
-              e.stopPropagation();
-              onSelect();
-            }}
-            className="mt-1 shrink-0 accent-accent"
-          />
+          <span onClick={(e) => e.stopPropagation()} className="mt-1 shrink-0">
+            <input
+              type="checkbox"
+              checked={selected}
+              onChange={() => onSelect()}
+              className="accent-accent cursor-pointer"
+            />
+          </span>
         )}
         {favicon}
         <div className="flex-1 min-w-0">

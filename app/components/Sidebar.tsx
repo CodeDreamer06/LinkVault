@@ -81,9 +81,6 @@ export function Sidebar({ view, onChangeView, onOpenCapture, onOpenCommand, onOp
         >
           <PlusIcon size={18} strokeWidth={2} />
           Capture Link
-          <span className="ml-1 opacity-60">
-            <ShortcutHint keys={["mod", "shift", "n"]} />
-          </span>
         </button>
       </div>
 

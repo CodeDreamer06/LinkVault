@@ -279,3 +279,11 @@ export const KeyboardIcon = (p: IconProps) => (
     <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10" />
   </Icon>
 );
+
+export const MenuIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <line x1="4" x2="20" y1="12" y2="12" />
+    <line x1="4" x2="20" y1="6" y2="6" />
+    <line x1="4" x2="20" y1="18" y2="18" />
+  </Icon>
+);

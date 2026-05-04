@@ -16,6 +16,7 @@ import { ActivityLogView } from "./components/ActivityLogView";
 import { SmartFiltersView } from "./components/SmartFiltersView";
 import { WorkspacesView } from "./components/WorkspacesView";
 import { KeyboardShortcutsDialog } from "./components/KeyboardShortcutsDialog";
+import { MobileNav } from "./components/MobileNav";
 import { updateLink, deleteLink } from "./lib/db";
 import type { LinkEntity, ViewType } from "./lib/types";
 
@@ -279,6 +280,15 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black flex">
+      <MobileNav
+        view={view}
+        onChangeView={navigate}
+        onOpenCapture={() => setCaptureOpen(true)}
+        onOpenCommand={() => setCommandOpen(true)}
+        onOpenShortcuts={() => setShortcutsOpen(true)}
+        counts={counts}
+      />
+
       <Sidebar
         view={view}
         onChangeView={navigate}
@@ -288,7 +298,7 @@ export default function Home() {
         counts={counts}
       />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden pt-[60px] md:pt-0 pb-[64px] md:pb-0">
         {view === "library" && (
           <LibraryView
             ref={searchRef}

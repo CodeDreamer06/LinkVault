@@ -32,6 +32,7 @@ export function LinkEditView({ link, onClose, data, onUpdate, onDelete }: LinkEd
   const [archived, setArchived] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [newReminderDate, setNewReminderDate] = useState<string>("");
+  const [copied, setCopied] = useState<boolean>(false);
 
   useEffect(() => {
     if (link) {
@@ -111,8 +112,10 @@ export function LinkEditView({ link, onClose, data, onUpdate, onDelete }: LinkEd
     onUpdate(updated);
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(link.url);
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(link.url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -123,7 +126,12 @@ export function LinkEditView({ link, onClose, data, onUpdate, onDelete }: LinkEd
             <ExternalLinkIcon size={14} /> Open
           </NDButton>
           <NDButton size="sm" variant="secondary" onClick={handleCopy}>
-            <CopyIcon size={14} /> Copy URL
+            {copied ? (
+              <CheckIcon size={14} className="text-green-500 animate-bounce" />
+            ) : (
+              <CopyIcon size={14} />
+            )}
+            {copied ? "Copied!" : "Copy URL"}
           </NDButton>
           <NDButton size="sm" variant="secondary" onClick={handleRefreshMeta} disabled={refreshing}>
             {refreshing ? "Refreshing..." : "Refresh Metadata"}

@@ -23,6 +23,7 @@ export function CaptureView({ open, onClose, data, onUpdate }: CaptureViewProps)
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [faviconUrl, setFaviconUrl] = useState<string | undefined>(undefined);
   const [note, setNote] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [category, setCategory] = useState("");
@@ -36,6 +37,7 @@ export function CaptureView({ open, onClose, data, onUpdate }: CaptureViewProps)
     setUrl("");
     setTitle("");
     setDescription("");
+    setFaviconUrl(undefined);
     setNote("");
     setTags([]);
     setCategory("");
@@ -57,6 +59,7 @@ export function CaptureView({ open, onClose, data, onUpdate }: CaptureViewProps)
     const meta = await fetchMetadata(normalizeUrl(url), data.settings.metadataFetchTimeout);
     if (meta.title) setTitle(meta.title);
     if (meta.description) setDescription(meta.description);
+    setFaviconUrl(meta.faviconUrl);
     if (meta.contentType) {
       // map content type string
     }
@@ -117,6 +120,7 @@ export function CaptureView({ open, onClose, data, onUpdate }: CaptureViewProps)
       hostname: new URL(normalized).hostname,
       title: title || normalized,
       description,
+      faviconUrl,
       note,
       tags: tagIds,
       category: catId || undefined,
@@ -135,7 +139,7 @@ export function CaptureView({ open, onClose, data, onUpdate }: CaptureViewProps)
 
     onUpdate(link);
     handleClose();
-  }, [url, title, description, note, tags, category, collections, priority, data, onUpdate, handleClose]);
+  }, [url, title, description, faviconUrl, note, tags, category, collections, priority, data, onUpdate, handleClose]);
 
   const canSave = isValidUrl(url);
 

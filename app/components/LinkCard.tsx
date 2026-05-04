@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { LinkEntity } from "../lib/types";
 import { formatRelativeTime, truncate } from "../lib/utils";
 import { StarIcon, ExternalLinkIcon, ArchiveIcon, TagIcon } from "./Icons";
@@ -16,6 +16,14 @@ interface LinkCardProps {
   viewMode?: "grid" | "list";
 }
 
+function getDefaultFaviconUrl(url: string): string | undefined {
+  try {
+    return `${new URL(url).origin}/favicon.ico`;
+  } catch {
+    return undefined;
+  }
+}
+
 export function LinkCard({
   link,
   selected,
@@ -26,8 +34,26 @@ export function LinkCard({
   onToggleArchive,
   viewMode = "list",
 }: LinkCardProps) {
-  const favicon = link.faviconUrl ? (
-    <img src={link.faviconUrl} alt="" className="w-4 h-4 shrink-0" onError={(e) => ((e.target as HTMLImageElement).style.display = "none")} />
+  const faviconCandidates = useMemo(
+    () => Array.from(new Set([link.faviconUrl, getDefaultFaviconUrl(link.url)].filter(Boolean))) as string[],
+    [link.faviconUrl, link.url]
+  );
+  const [faviconIndex, setFaviconIndex] = useState(0);
+
+  useEffect(() => {
+    setFaviconIndex(0);
+  }, [link.faviconUrl, link.url]);
+
+  const faviconSrc = faviconCandidates[faviconIndex];
+  const favicon = faviconSrc ? (
+    <img
+      src={faviconSrc}
+      alt=""
+      className="w-4 h-4 shrink-0"
+      onError={() => {
+        setFaviconIndex((current) => current + 1);
+      }}
+    />
   ) : (
     <div className="w-4 h-4 rounded-full bg-border shrink-0" />
   );

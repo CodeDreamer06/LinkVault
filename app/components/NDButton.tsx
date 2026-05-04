@@ -24,7 +24,7 @@ export function NDButton({
   title,
 }: NDButtonProps) {
   const base =
-    "inline-flex items-center justify-center font-mono uppercase tracking-[0.06em] transition-opacity duration-150 ease-out cursor-pointer";
+    "inline-flex items-center justify-center gap-2 font-mono uppercase tracking-[0.06em] transition-opacity duration-150 ease-out cursor-pointer";
 
   const sizeCls =
     size === "sm"
